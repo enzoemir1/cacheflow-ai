@@ -1,0 +1,7 @@
+node_modules/
+package-lock.json
+.vercel/
+*.zip
+marketing/screenshots/
+take-screenshots.js
+~/.cacheflow/
