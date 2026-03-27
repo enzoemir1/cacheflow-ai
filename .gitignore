@@ -5,3 +5,4 @@ package-lock.json
 marketing/screenshots/
 take-screenshots.js
 ~/.cacheflow/
+.DS_Store
