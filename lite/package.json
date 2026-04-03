@@ -1,0 +1,13 @@
+{
+  "name": "cacheflow-lite",
+  "version": "1.0.0",
+  "description": "Free lite version of CacheFlow AI — simple OpenAI-compatible caching proxy",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node src/test.js"
+  },
+  "keywords": ["openai", "proxy", "cache", "ai", "cost-optimization", "llm"],
+  "author": "Automatia BCN",
+  "license": "MIT"
+}

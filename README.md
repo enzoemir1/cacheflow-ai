@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/savings-60--85%25-00FF88?style=for-the-badge&labelColor=0a0b0f" alt="Savings">
-  <img src="https://img.shields.io/badge/price-$249%20one--time-FFD700?style=for-the-badge&labelColor=0a0b0f" alt="Price">
+  <img src="https://img.shields.io/badge/price-$79%20launch-FFD700?style=for-the-badge&labelColor=0a0b0f" alt="Price">
   <img src="https://img.shields.io/badge/platforms-OpenAI%20%7C%20Claude%20%7C%20Gemini%20%7C%20Cursor-00D9FF?style=for-the-badge&labelColor=0a0b0f" alt="Platforms">
 </p>
 
@@ -14,7 +14,7 @@
 
 <p align="center">
   <a href="https://cacheflow-ai.vercel.app"><strong>Website</strong></a> ·
-  <a href="https://automatiabcn.gumroad.com/l/cacheflow-ai"><strong>Buy Now — $249</strong></a>
+  <a href="https://automatiabcn.gumroad.com/l/cacheflow-ai"><strong>Buy Now — $79 (Launch Price)</strong></a>
 </p>
 
 ---
@@ -101,7 +101,30 @@ Ollama (Qwen3, Llama, Mistral, Phi4 — any model)
 
 ---
 
-## Quick Start
+## Try the Free Lite Version
+
+Want to test the concept before buying? The `lite/` folder contains a free, working caching proxy:
+
+```bash
+cd lite
+OPENAI_API_KEY=sk-... npm start
+# Proxy running at http://127.0.0.1:4747/v1
+```
+
+Lite version caches identical OpenAI requests locally at $0. [See lite/README.md for details.](lite/README.md)
+
+| Feature | Lite (Free) | Full ($79) |
+|---------|------------|------------|
+| Caching | File-based | SQLite + semantic similarity |
+| Free APIs | No | Yes — Groq, Cerebras, OpenRouter |
+| Local Models | No | Yes — Ollama auto-detection |
+| Dashboard | No | Yes — real-time UI |
+| Smart Routing | No | Yes — auto-picks cheapest provider |
+| Prompt Compression | No | Yes — 10-30% token reduction |
+
+---
+
+## Quick Start (Full Version)
 
 ```bash
 # 1. Install
@@ -143,12 +166,12 @@ npx cacheflow start
 
 <p align="center">
   <a href="https://automatiabcn.gumroad.com/l/cacheflow-ai">
-    <img src="https://img.shields.io/badge/GET%20CACHEFLOW%20AI-$249%20ONE--TIME-00FF88?style=for-the-badge&logoColor=white&labelColor=0a0b0f" alt="Buy Now" height="50">
+    <img src="https://img.shields.io/badge/GET%20CACHEFLOW%20AI-$79%20LAUNCH%20PRICE-00FF88?style=for-the-badge&logoColor=white&labelColor=0a0b0f" alt="Buy Now" height="50">
   </a>
 </p>
 
 <p align="center">
-  <strong>$249 one-time payment</strong> · No subscriptions · 30-day money-back guarantee
+  <strong>$79 launch price</strong> · No subscriptions · 30-day money-back guarantee · Price increases after 50 sales
 </p>
 
 <p align="center">
