@@ -174,6 +174,6 @@ Point your OpenAI client to http://127.0.0.1:${PORT}/v1
 Identical requests will be served from cache at $0.
 
 Full version with free API routing, dashboard, local model
-support, and prompt compression: automatiabcn.gumroad.com
+support, and prompt compression: automatiabcn.com
 `);
 });

@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/savings-60--85%25-00FF88?style=for-the-badge&labelColor=0a0b0f" alt="Savings">
-  <img src="https://img.shields.io/badge/price-$79%20launch-FFD700?style=for-the-badge&labelColor=0a0b0f" alt="Price">
+  <img src="https://img.shields.io/badge/lite-free%20%26%20open%20source-00D9FF?style=for-the-badge&labelColor=0a0b0f" alt="Lite is free">
   <img src="https://img.shields.io/badge/platforms-OpenAI%20%7C%20Claude%20%7C%20Gemini%20%7C%20Cursor-00D9FF?style=for-the-badge&labelColor=0a0b0f" alt="Platforms">
 </p>
 
@@ -13,9 +13,55 @@
 </p>
 
 <p align="center">
-  <a href="https://cacheflow-ai.vercel.app"><strong>Website</strong></a> ·
-  <a href="https://automatiabcn.gumroad.com/l/cacheflow-ai"><strong>Buy Now — $79 (Launch Price)</strong></a>
+  <a href="https://cacheflow-ai.vercel.app"><strong>Website</strong></a>
 </p>
+
+---
+
+## Quick Start — Free Lite Version
+
+The `lite/` folder in this repo is a **free, open-source, working** caching proxy. It sits between your app and OpenAI and serves identical requests from local cache at $0. No build step, zero dependencies — just Node.js 18+.
+
+```bash
+# 1. Clone and enter the lite folder
+git clone https://github.com/enzoemir1/cacheflow-ai.git
+cd cacheflow-ai/lite
+
+# 2. Start the proxy (runs lite/src/server.js)
+OPENAI_API_KEY=sk-... npm start
+# Proxy:  http://127.0.0.1:4747/v1
+# Health: http://127.0.0.1:4747/health
+# Stats:  http://127.0.0.1:4747/stats
+```
+
+Then point any OpenAI-compatible client at the proxy — **one line change**:
+
+```javascript
+// Before — full price
+const client = new OpenAI({ apiKey: "sk-..." });
+
+// After — identical requests cached at $0
+const client = new OpenAI({
+  apiKey: "sk-...",
+  baseURL: "http://127.0.0.1:4747/v1"
+});
+```
+
+Want to see it in action? Run the included test (sends the same request twice — first hits OpenAI, second returns from cache at $0):
+
+```bash
+# In another terminal, with the proxy running:
+npm test
+```
+
+Full details: **[lite/README.md](lite/README.md)**
+
+### What the Lite version does
+
+- Caches identical OpenAI requests locally (file-based)
+- Returns cached responses instantly at $0
+- Tracks cache hit rate and estimated savings
+- Zero dependencies — just Node.js
 
 ---
 
@@ -45,37 +91,26 @@ Your App / SDK / Cursor / Any Tool
   └─────────────────────────────────┘
 ```
 
-**One line change in your code. That's it.**
-
-```javascript
-// Before — full price
-const client = new OpenAI({ apiKey: "sk-..." });
-
-// After — 60-85% cheaper
-const client = new OpenAI({
-  apiKey: "sk-...",
-  baseURL: "http://127.0.0.1:4747/v1"
-});
-```
+> Cache check is available in the free Lite version. Prompt compression, smart routing, and the dashboard are part of the full version (see below).
 
 ---
 
-## Features
+## Lite vs Full
 
-| Feature | Description |
-|---------|-------------|
-| **Smart Caching** | Identical requests return instantly from local SQLite cache at $0 |
-| **Free API Routing** | Simple tasks auto-route to Groq, Cerebras, OpenRouter (70B models, $0) |
-| **Local Model Support** | Ollama integration — auto-detects GPU, Apple Silicon, CPU |
-| **Prompt Compression** | 10-30% token reduction on every request |
-| **Real-Time Dashboard** | Dark-themed UI with live savings counter, provider charts, request logs |
-| **Universal Compatibility** | OpenAI, Claude, Gemini, Cursor, LangChain — any OpenAI-compatible tool |
-| **100% Private** | Runs entirely on your machine. No cloud, no telemetry, no tracking |
-| **Auto Setup** | `cacheflow init` detects your hardware, API keys, and free providers |
+| Feature | Lite (Free, this repo) | Full (paid) |
+|---------|------------------------|-------------|
+| Caching | File-based | SQLite + semantic similarity |
+| Free API Routing | No | Yes — Groq, Cerebras, OpenRouter ($0) |
+| Local Models | No | Yes — Ollama auto-detection |
+| Prompt Compression | No | Yes — 10-30% token reduction |
+| Dashboard | No | Yes — real-time UI with charts |
+| Smart Routing | No | Yes — auto-picks cheapest provider |
+| Providers | OpenAI only | 8 providers |
+| CLI | No | Yes — init, start, stop, stats, demo |
 
 ---
 
-## Supported Providers
+## Supported Providers (Full Version)
 
 **Paid (your existing keys):**
 OpenAI (GPT-4o, GPT-4.1, o3/o4) · Anthropic (Claude Sonnet/Opus/Haiku) · Google Gemini
@@ -88,73 +123,6 @@ Ollama (Qwen3, Llama, Mistral, Phi4 — any model)
 
 ---
 
-## The Numbers
-
-| Without CacheFlow | With CacheFlow |
-|-------------------|----------------|
-| $200+/month | **$30-60/month** |
-| Every request hits paid API | 80% handled for free |
-| No visibility into spending | Real-time savings dashboard |
-| $2,400+/year | **Save $1,680-2,040/year** |
-
-**CacheFlow pays for itself in the first week.**
-
----
-
-## Try the Free Lite Version
-
-Want to test the concept before buying? The `lite/` folder contains a free, working caching proxy:
-
-```bash
-cd lite
-OPENAI_API_KEY=sk-... npm start
-# Proxy running at http://127.0.0.1:4747/v1
-```
-
-Lite version caches identical OpenAI requests locally at $0. [See lite/README.md for details.](lite/README.md)
-
-| Feature | Lite (Free) | Full ($79) |
-|---------|------------|------------|
-| Caching | File-based | SQLite + semantic similarity |
-| Free APIs | No | Yes — Groq, Cerebras, OpenRouter |
-| Local Models | No | Yes — Ollama auto-detection |
-| Dashboard | No | Yes — real-time UI |
-| Smart Routing | No | Yes — auto-picks cheapest provider |
-| Prompt Compression | No | Yes — 10-30% token reduction |
-
----
-
-## Quick Start (Full Version)
-
-```bash
-# 1. Install
-npm install
-
-# 2. Auto-detect and configure
-npx cacheflow init
-
-# 3. Start proxy + dashboard
-npx cacheflow start
-
-# Dashboard: http://127.0.0.1:4748
-# Proxy:     http://127.0.0.1:4747/v1
-```
-
----
-
-## What You Get
-
-- **Full Node.js source code** (38 files)
-- **8 AI provider integrations** (OpenAI, Anthropic, Groq, Cerebras, OpenRouter, Gemini, Ollama)
-- **Real-time dashboard** with WebSocket updates
-- **CLI** with init wizard, start/stop/status/stats/demo commands
-- **Auto hardware detection** (GPU, Apple Silicon, CPU)
-- **SQLite-based** caching + analytics (zero external dependencies)
-- **MIT License** — use it however you want
-- **Lifetime updates**
-
----
-
 ## Requirements
 
 - Node.js 18+
@@ -164,22 +132,25 @@ npx cacheflow start
 
 ---
 
-<p align="center">
-  <a href="https://automatiabcn.gumroad.com/l/cacheflow-ai">
-    <img src="https://img.shields.io/badge/GET%20CACHEFLOW%20AI-$79%20LAUNCH%20PRICE-00FF88?style=for-the-badge&logoColor=white&labelColor=0a0b0f" alt="Buy Now" height="50">
-  </a>
-</p>
+## Full Version (Paid Product)
+
+The full version adds free API routing across 8 providers, local model support, prompt compression, smart routing, and a real-time dashboard — for **60-85% total savings**.
+
+| Without CacheFlow | With CacheFlow (Full) |
+|-------------------|------------------------|
+| $200+/month | **$30-60/month** |
+| Every request hits paid API | 80% handled for free |
+| No visibility into spending | Real-time savings dashboard |
+| $2,400+/year | **Save $1,680-2,040/year** |
+
+**What you get:** full Node.js source, 8 provider integrations, real-time dashboard with WebSocket updates, CLI (init/start/stop/status/stats/demo), auto hardware detection, SQLite caching + analytics, MIT License, lifetime updates.
 
 <p align="center">
-  <strong>$79 launch price</strong> · No subscriptions · 30-day money-back guarantee · Price increases after 50 sales
-</p>
-
-<p align="center">
-  <a href="https://cacheflow-ai.vercel.app">View Landing Page</a>
+  <a href="https://automatiabcn.com"><strong>Get the full version → automatiabcn.com</strong></a>
 </p>
 
 ---
 
 <p align="center">
-  <sub>Made by <a href="https://automatiabcn.com">AutomatiaBCN</a></sub>
+  <sub>Made by <a href="https://automatiabcn.com">Automatia BCN</a></sub>
 </p>

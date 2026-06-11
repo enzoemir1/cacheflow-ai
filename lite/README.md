@@ -67,4 +67,4 @@ The test sends the same request twice. First call hits OpenAI (~500ms). Second c
 | Providers | OpenAI only | 8 providers |
 | CLI | No | Yes — init, start, stop, stats, demo |
 
-**Full version:** [automatiabcn.gumroad.com/l/cacheflow-ai](https://automatiabcn.gumroad.com/l/cacheflow-ai)
+**Full version (paid product):** [automatiabcn.com](https://automatiabcn.com)

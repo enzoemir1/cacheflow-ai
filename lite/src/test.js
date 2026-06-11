@@ -68,7 +68,7 @@ async function run() {
     console.log("Cost of request 2: $0 (served from cache)");
     console.log("\nFull version adds: free API routing, dashboard,");
     console.log("local models, prompt compression → 60-85% total savings.");
-    console.log("Get it at: automatiabcn.gumroad.com/l/cacheflow-ai");
+    console.log("Get it at: automatiabcn.com");
   } catch (err) {
     console.error("Error:", err.message);
     console.error("Is the server running? Start it with: npm start");
