@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# The lite proxy has zero dependencies and its test (lite/src/test.js) needs a
+# live server + a real OPENAI_API_KEY, so CI just syntax-checks the sources on a
+# range of Node versions instead of running the integration test.
+jobs:
+  syntax-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    defaults:
+      run:
+        working-directory: lite
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: node --check src/server.js
+      - run: node --check src/test.js
