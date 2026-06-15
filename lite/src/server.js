@@ -59,7 +59,10 @@ function getFromCache(hash) {
 
 function saveToCache(hash, data) {
   const file = path.join(CACHE_DIR, `${hash}.json`);
-  fs.writeFileSync(file, JSON.stringify(data), "utf8");
+  // Atomic write so a concurrent reader never sees a half-written cache entry.
+  const tmp = `${file}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(data), "utf8");
+  fs.renameSync(tmp, file);
 }
 
 // ─── Stats Tracker ───────────────────────────────────────
@@ -71,7 +74,9 @@ function loadStats() {
 }
 
 function saveStats(stats) {
-  fs.writeFileSync(STATS_FILE, JSON.stringify(stats, null, 2), "utf8");
+  const tmp = `${STATS_FILE}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(stats, null, 2), "utf8");
+  fs.renameSync(tmp, STATS_FILE);
 }
 
 // ─── Proxy to OpenAI ─────────────────────────────────────
