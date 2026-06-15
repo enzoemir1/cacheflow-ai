@@ -19,13 +19,34 @@ if (!OPENAI_API_KEY) {
 // ─── Cache Layer ─────────────────────────────────────────
 if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 
+// Hash the WHOLE request (minus `stream`, which is handled separately and never
+// cached) so that any parameter affecting the output — max_tokens, top_p, stop,
+// frequency_penalty, response_format, tools, … — produces a distinct key. The
+// previous version keyed only on model+messages+temperature, so two requests
+// that differed solely in max_tokens collided and the second got the first
+// request's (wrong) response served from cache.
 function getCacheKey(body) {
-  const key = JSON.stringify({
-    model: body.model,
-    messages: body.messages,
-    temperature: body.temperature,
-  });
-  return crypto.createHash("sha256").update(key).digest("hex");
+  const { stream, ...rest } = body;
+  return crypto.createHash("sha256").update(JSON.stringify(rest)).digest("hex");
+}
+
+// USD price per 1M tokens [input, output]. Used to report HONEST savings from
+// the cached response's own usage block instead of a flat guess.
+const MODEL_PRICES = {
+  "gpt-4o-mini": [0.15, 0.6],
+  "gpt-4o": [2.5, 10.0],
+  "gpt-4.1": [2.0, 8.0],
+  "gpt-4.1-mini": [0.4, 1.6],
+  "gpt-4-turbo": [10.0, 30.0],
+  "gpt-3.5-turbo": [0.5, 1.5],
+};
+
+function estimateSavedCost(model, usage) {
+  if (!usage) return 0;
+  const [pIn, pOut] = MODEL_PRICES[model] || MODEL_PRICES["gpt-4o-mini"];
+  const inTok = usage.prompt_tokens || 0;
+  const outTok = usage.completion_tokens || 0;
+  return (inTok * pIn + outTok * pOut) / 1_000_000;
 }
 
 function getFromCache(hash) {
@@ -110,15 +131,35 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Read request body
+  // Read request body (capped to guard against runaway / malicious payloads)
+  const MAX_BODY_BYTES = 5 * 1024 * 1024; // 5 MiB — generous for chat payloads
   let body = "";
-  req.on("data", (chunk) => (body += chunk));
+  let aborted = false;
+  req.on("data", (chunk) => {
+    if (aborted) return;
+    body += chunk;
+    if (Buffer.byteLength(body) > MAX_BODY_BYTES) {
+      aborted = true;
+      res.writeHead(413, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Request body too large (max 5 MiB)" }));
+      req.destroy();
+    }
+  });
   req.on("end", async () => {
+    if (aborted) return;
     const stats = loadStats();
     stats.totalRequests++;
 
     try {
       const parsed = JSON.parse(body);
+
+      // Basic shape validation — a malformed request should fail fast here
+      // rather than producing a junk cache key and a confusing OpenAI error.
+      if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.messages)) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Invalid request: 'messages' array is required" }));
+        return;
+      }
 
       // Skip cache for streaming requests
       if (parsed.stream) {
@@ -135,10 +176,11 @@ const server = http.createServer(async (req, res) => {
       const cached = getFromCache(hash);
 
       if (cached) {
+        const saved = estimateSavedCost(parsed.model, cached.usage);
         stats.cacheHits++;
-        stats.estimatedSaved += 0.003; // ~$0.003 per cached gpt-4o-mini call
+        stats.estimatedSaved += saved;
         saveStats(stats);
-        console.log(`[CACHE HIT] ${hash.slice(0, 8)} — $0 (saved ~$0.003)`);
+        console.log(`[CACHE HIT] ${hash.slice(0, 8)} — $0 (saved ~$${saved.toFixed(5)})`);
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(cached));
         return;
