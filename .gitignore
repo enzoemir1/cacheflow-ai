@@ -6,3 +6,9 @@ marketing/screenshots/
 take-screenshots.js
 ~/.cacheflow/
 .DS_Store
+
+# Runtime cache + stats — cached entries contain the user's actual prompts and
+# completions, so they must never be committed.
+.cache/
+.stats.json
+*.tmp
